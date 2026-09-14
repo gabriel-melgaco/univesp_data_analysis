@@ -18,10 +18,10 @@ Ou manualmente — terminal 1, Streamlit (dashboard na porta 8501):
 .venv/bin/streamlit run dashboard.py
 ```
 
-Terminal 2 — Django (página web na porta 8001, a 8000 é usada pelo HPLIP do sistema):
+Terminal 2 — Django (página web na porta 8001, disponível na rede; a 8000 é usada pelo HPLIP do sistema):
 
 ```bash
-.venv/bin/python manage.py runserver 8001
+.venv/bin/python manage.py runserver 0.0.0.0:8001
 ```
 
 Acesse http://localhost:8001 — o dashboard Streamlit aparece embutido na página.

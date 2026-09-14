@@ -199,7 +199,8 @@
   </footer>
 
   <script>
-    const STREAMLIT_URL = "{{ streamlit_url|safe }}";
+    const base = window.location.hostname || 'localhost';
+    const STREAMLIT_URL = 'http://' + base + ':8501';
     const frame = document.getElementById('frame');
     const overlay = document.getElementById('overlay');
     const overlayText = document.getElementById('overlay-text');
@@ -263,6 +264,8 @@
       clearInterval(checkTimer);
       connect();
     });
+
+    document.querySelector('a.btn[target="_blank"]').href = STREAMLIT_URL;
 
     tryConnect();
   </script>

@@ -6,7 +6,8 @@ cd "$(dirname "$0")"
 trap 'kill 0' EXIT
 
 .venv/bin/streamlit run dashboard.py --server.headless true &
-.venv/bin/python manage.py runserver 8001 &
+.venv/bin/python manage.py runserver 0.0.0.0:8001 &
 
-echo "Dashboard: http://localhost:8001 (Streamlit direto: http://localhost:8501)"
+echo "Página: http://localhost:8001 (rede: http://$(hostname -I | awk '{print $1}'):8001)"
+echo "Streamlit direto: http://localhost:8501"
 wait
