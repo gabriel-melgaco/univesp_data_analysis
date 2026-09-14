@@ -6,7 +6,13 @@ Trabalho acadêmico: **UNIVESP · PJI410 — A2026S2N1 · Grupo 14**
 
 ## Executar
 
-Terminal 1 — Streamlit (dashboard na porta 8501):
+Opção rápida (sobe os dois serviços juntos):
+
+```bash
+./run.sh
+```
+
+Ou manualmente — terminal 1, Streamlit (dashboard na porta 8501):
 
 ```bash
 .venv/bin/streamlit run dashboard.py

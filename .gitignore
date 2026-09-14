@@ -1,0 +1,29 @@
+# Ambiente virtual
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+
+# Dataset (baixar de https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
+archive/
+archive.zip
+*.csv
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+
+# Logs
+*.log

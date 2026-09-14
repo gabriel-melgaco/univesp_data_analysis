@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>E-commerce Brasileiro — Dashboard de Insights</title>
+  <style>
+    :root {
+      --bg: #0e1117;
+      --panel: #171b26;
+      --border: #2a3040;
+      --accent: #4f8cff;
+      --text: #eaeef6;
+      --muted: #9aa4b5;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { height: 100%; }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      background: linear-gradient(135deg, #12233f 0%, #1f4d8f 60%, #2563b3 100%);
+      padding: 22px 28px 18px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    header::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top right, #ffffff14, transparent 55%);
+      pointer-events: none;
+    }
+    header h1 {
+      font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+      letter-spacing: .4px;
+    }
+    header .subtitle { margin-top: 6px; opacity: .85; font-size: .95rem; }
+    .badges { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .badge {
+      background: #ffffff14;
+      border: 1px solid #ffffff2b;
+      backdrop-filter: blur(4px);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: .78rem;
+      letter-spacing: .5px;
+    }
+    .badge a { color: #bcd6ff; text-decoration: none; }
+    .badge a:hover { text-decoration: underline; }
+    details.tema {
+      margin: 12px auto 0;
+      max-width: 900px;
+      background: #ffffff10;
+      border: 1px solid #ffffff22;
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-size: .82rem;
+      text-align: left;
+      cursor: pointer;
+    }
+    details.tema summary {
+      font-weight: 600;
+      letter-spacing: .3px;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    details.tema summary::before { content: "▸"; transition: transform .2s; }
+    details.tema[open] summary::before { transform: rotate(90deg); }
+    details.tema p { margin-top: 8px; line-height: 1.5; opacity: .9; }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+      font-size: .82rem;
+    }
+    .status { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: #f0b429; box-shadow: 0 0 8px #f0b42988; transition: all .3s; }
+    .status.online .dot { background: #3fb950; box-shadow: 0 0 8px #3fb95088; }
+    .status.offline .dot { background: #f85149; box-shadow: 0 0 8px #f8514988; }
+    .spacer { flex: 1; }
+    .btn {
+      background: #242b3a;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: .82rem;
+      cursor: pointer;
+      transition: background .15s, transform .1s;
+    }
+    .btn:hover { background: #2e3648; }
+    .btn:active { transform: scale(.97); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); }
+    .btn.primary:hover { background: #3d7cf0; }
+
+    .frame-wrap {
+      flex: 1;
+      position: relative;
+      padding: 14px;
+      min-height: 0;
+    }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      border-radius: 12px;
+      background: #fff;
+      opacity: 0;
+      transition: opacity .4s;
+    }
+    iframe.ready { opacity: 1; }
+    .overlay {
+      position: absolute;
+      inset: 14px;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      background: var(--panel);
+      transition: opacity .3s;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 42px;
+      height: 42px;
+      border: 4px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .overlay p { color: var(--muted); font-size: .9rem; text-align: center; padding: 0 20px; }
+    .overlay code { background: #ffffff12; padding: 2px 8px; border-radius: 6px; }
+
+    footer {
+      text-align: center;
+      font-size: .78rem;
+      color: var(--muted);
+      padding: 10px 16px 14px;
+    }
+    footer code { background: #ffffff12; padding: 2px 6px; border-radius: 4px; }
+
+    @media (max-width: 640px) {
+      header { padding: 16px 14px 14px; }
+      .toolbar { flex-wrap: wrap; }
+      .frame-wrap { padding: 8px; }
+      .overlay { inset: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📦 E-commerce Brasileiro — Dashboard de Insights</h1>
+    <p class="subtitle">Visão Logística · Satisfação vs. Prazo de Entrega · Faturamento e Preferências de Compra</p>
+    <div class="badges">
+      <span class="badge">UNIVESP · PJI410 — A2026S2N1 · Grupo 14</span>
+      <span class="badge">Dataset: <a href="https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce" target="_blank" rel="noopener">Kaggle — olistbr/brazilian-ecommerce</a></span>
+    </div>
+    <details class="tema">
+      <summary>Tema do PI</summary>
+      <p>Desenvolver análise de dados em escala utilizando conjuntos de dados existentes ou capturados por IoT e aprendizagem de máquina — preparando uma interface para visualização dos resultados.</p>
+    </details>
+  </header>
+
+  <div class="toolbar">
+    <span class="status" id="status"><span class="dot"></span><span id="status-text">Verificando Streamlit…</span></span>
+    <span class="spacer"></span>
+    <button class="btn" id="btn-reload" title="Recarregar o dashboard">🔄 Recarregar</button>
+    <a class="btn" href="{{ streamlit_url }}" target="_blank" rel="noopener" title="Abrir em nova aba">↗ Abrir em nova aba</a>
+  </div>
+
+  <div class="frame-wrap">
+    <div class="overlay" id="overlay">
+      <div class="spinner"></div>
+      <p id="overlay-text">Carregando dashboard…</p>
+    </div>
+    <iframe id="frame" src="about:blank" title="Dashboard Streamlit"></iframe>
+  </div>
+
+  <footer>
+    Se o painel não carregar, inicie o Streamlit: <code>.venv/bin/streamlit run dashboard.py</code>
+  </footer>
+
+  <script>
+    const STREAMLIT_URL = "{{ streamlit_url|safe }}";
+    const frame = document.getElementById('frame');
+    const overlay = document.getElementById('overlay');
+    const overlayText = document.getElementById('overlay-text');
+    const statusEl = document.getElementById('status');
+    const statusText = document.getElementById('status-text');
+    let checkTimer = null;
+
+    function setStatus(state, text) {
+      statusEl.className = 'status ' + state;
+      statusText.textContent = text;
+    }
+
+    function setOverlay(msg) {
+      overlayText.textContent = msg;
+      overlay.classList.remove('hidden');
+    }
+
+    function connect() {
+      frame.src = STREAMLIT_URL + '/?embed=true';
+      setOverlay('Carregando dashboard…');
+      setStatus('online', 'Streamlit conectado');
+    }
+
+    async function isUp() {
+      try {
+        await fetch(STREAMLIT_URL + '/_stcore/health', { mode: 'no-cors' });
+        return true;
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function checkStreamlit() {
+      if (await isUp()) {
+        clearInterval(checkTimer);
+        connect();
+      }
+    }
+
+    async function tryConnect() {
+      setStatus('', 'Verificando Streamlit…');
+      setOverlay('Aguardando o Streamlit ficar disponível…');
+      if (await isUp()) {
+        connect();
+        return;
+      }
+      setStatus('offline', 'Streamlit offline — tentando novamente…');
+      setOverlay('Streamlit não está rodando. Inicie com: .venv/bin/streamlit run dashboard.py');
+      checkTimer = setInterval(checkStreamlit, 3000);
+    }
+
+    frame.addEventListener('load', () => {
+      if (frame.src !== 'about:blank') {
+        frame.classList.add('ready');
+        overlay.classList.add('hidden');
+        setStatus('online', 'Streamlit conectado');
+      }
+    });
+
+    document.getElementById('btn-reload').addEventListener('click', () => {
+      clearInterval(checkTimer);
+      connect();
+    });
+
+    tryConnect();
+  </script>
+</body>
+</html>
